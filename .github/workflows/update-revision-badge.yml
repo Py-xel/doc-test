@@ -1,0 +1,43 @@
+name: Update wiki badges
+
+on:
+  push:
+    branches:
+      - master
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-wiki-revision-badge
+  cancel-in-progress: false
+
+jobs:
+  update-badge:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out the wiki
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Update wiki badges
+        shell: bash
+        run: |
+          revision_count=$(git rev-list --count HEAD)
+          badge_count=$((revision_count + 1))
+          last_updated=$(date -u +%Y.%m.%d)
+          last_updated=${last_updated//./%2E}
+          sed -E -i "s/(Revisions-)[^-)]*/\\1${badge_count}/" Home.md
+          sed -E -i "s|(Last_Updated-)[^?)]*(-[A-Fa-f0-9]{6}\\?style=)|\\1${last_updated}\\2|" Home.md
+
+          if git diff --quiet -- Home.md; then
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add Home.md
+          git commit -m "chore: update wiki badges"
+          git push
