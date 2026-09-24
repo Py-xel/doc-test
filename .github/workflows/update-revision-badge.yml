@@ -18,14 +18,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Check out the wiki
+      - name: Check out the wiki repository
         uses: actions/checkout@v4
         with:
+          repository: ${{ github.repository }}.wiki
+          path: wiki
           fetch-depth: 0
 
       - name: Update wiki badges
         shell: bash
         run: |
+          cd wiki
           revision_count=$(git rev-list --count HEAD)
           badge_count=$((revision_count + 1))
           last_updated=$(date -u +%Y.%m.%d)
