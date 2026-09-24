@@ -30,7 +30,7 @@ jobs:
         run: |
           cd wiki
           revision_count=$(git rev-list --count HEAD)
-          badge_count=$((revision_count + 1))
+          badge_count=$revision_count
           last_updated=$(date -u +%Y.%m.%d)
           last_updated=${last_updated//./%2E}
           sed -E -i "s/(Revisions-)[^-)]*/\\1${badge_count}/" Home.md
