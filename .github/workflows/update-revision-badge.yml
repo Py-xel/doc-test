@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+  gollum:
   workflow_dispatch:
 
 permissions:
@@ -15,6 +16,7 @@ concurrency:
 
 jobs:
   update-badge:
+    if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
 
     steps:
